@@ -1,0 +1,5 @@
+package ZAM
+
+trait ThreadService {
+
+}
