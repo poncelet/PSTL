@@ -16,7 +16,7 @@ class MyViewPanel(Thr : ZAM.ThreadService, choice : Array[Int]) extends JPanel {
 		setLayout(new GridLayout(2, choice.size/2))
 		for(i <-0  to choice.size - 1) choice(i) match {
 		case 0 => add(new CodeVue(Thr))
-		case 1 => //add(VuePile())
+		case 1 => add(new ContextVue(Thr))
 		}
 	}
 }

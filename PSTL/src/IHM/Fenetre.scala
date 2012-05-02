@@ -24,8 +24,6 @@ import java.awt.Component
 
 class Fenetre (Thr : ZAM.ThreadService) extends JFrame {
   
-    var WinSize = majsize
-    println( WinSize.height + " and" +WinSize.width)
 	val conteneurP = getContentPane
 	
 	val mB = new JMenuBar
@@ -50,12 +48,10 @@ class Fenetre (Thr : ZAM.ThreadService) extends JFrame {
 	setJMenuBar(mB)
     
 		/* Image fond */
-    	val FondPanel = new JPanel() {
-	  setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS))
+    	val FondPanel = Box.createVerticalBox()
 	  
 		/*Panel de boutons*/
-		val BtnPanel = new JPanel()
-		BtnPanel.setLayout(new BoxLayout(BtnPanel, BoxLayout.LINE_AXIS))
+		val BtnPanel = Box.createHorizontalBox()
 		BtnPanel.add(Box.createRigidArea(new Dimension(10, 0)))
 		BtnPanel.add(new ExecBtn("exec"))
 		BtnPanel.add(new FowardBtn("Fwd"))
@@ -67,35 +63,48 @@ class Fenetre (Thr : ZAM.ThreadService) extends JFrame {
 		
 		
 		/* BtnPanel.setBackground(new Color(301))*/
-		add(BtnPanel)
-		add(Box.createRigidArea(new Dimension(0, 10)))
+		FondPanel.add(BtnPanel)
+		FondPanel.add(Box.createRigidArea(new Dimension(0, 10)))
     
 		/* Vus */
 		val ViewPanel = new MyViewPanel(Thr, Array(0,1))
-		add(ViewPanel)
+		FondPanel.add(ViewPanel)
 		
 		/* fond */
-		setOpaque(true)
+		FondPanel.setOpaque(true)
 		
 			override def paint(g :Graphics) = {
-		  	WinSize = majsize
-		  	if(WinSize.height != 0) { setSize(WinSize)
-		  	  println("maintenant : " + WinSize.height + " and " + WinSize.width)
-		  	}
 			val image = ImageIO.read(new File("../Images/Fond.jpg"))
 			g.drawImage(image, 0, 0, null)
-			super.paintChildren(g)
+			paintComponents(g)
 			}
 	  
-		}
 	
-    conteneurP.add(FondPanel,  BorderLayout.LINE_START)
+    conteneurP.add(FondPanel)
     
 	/*setFont()*/
 	/*setIconImage(new Image)*/
-	setMinimumSize(new Dimension(200, 200))
-	pack
+	setMinimumSize(new Dimension(600, 200))
 	setVisible(true)
     
-    def majsize = super.getSize()
 }
+
+/** Create an ARGB BufferedImage 
+BufferedImage img = ImageIO.read(imageSrc);
+int w = img.getWidth(null);
+int h = img.getHeight(null);
+BufferedImage bi = new
+    BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+Graphics g = bi.getGraphics();
+g.drawImage(img, 0, 0, null);
+
+
+  Create a rescale filter op that makes the image
+  50% opaque.
+ 
+float[] scales = { 1f, 1f, 1f, 0.5f };
+float[] offsets = new float[4];
+RescaleOp rop = new RescaleOp(scales, offsets, null);
+
+ Draw the image, applying the filter 
+g2d.drawImage(bi, rop, 0, 0); **/
