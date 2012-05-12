@@ -9,17 +9,17 @@ class ThreadStack {
 	
 	def changeSp(newsp : Int) = sp = newsp
 	
-	def addVal(v : Value) =
+	def push(v : Value) =
 		if(sp == stk.size) {stk += v; sp = sp + 1}
 		else {stk(sp) = v; sp = sp + 1}
 	
 	def getVal = stk(sp-1)
 	
-	def get(i : Int) = stk(i)
+	def get(i : Int) = stk((sp-1) - i)
 	
-	def update(i: Int, v : Value) = stk.update(i, v)
+	def update(i: Int, v : Value) = stk.update((sp-1) - i, v)
 	
-	def push = {stk.remove(sp-1); sp = sp - 1}
+	def pop = {stk.remove(sp-1); sp = sp - 1}
 	
 	def clear = {stk.clear; sp = 0}
 	

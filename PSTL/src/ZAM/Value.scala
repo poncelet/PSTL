@@ -47,6 +47,9 @@ class Zamblock (tag : BlockT.blockT, size : Long, value : Array[Value] ) extends
   def set(n : Int, v : Value) =  value.update(n, v) 
   
   override def toString = tag match {
+    case BlockT.closure_t => {var str = "tableau de valeur de " + size + " : "
+    						value.foreach(ent => str += ent.toString + ", ")
+    						str}
     case BlockT.abstract_t => "abstract de " + size + " : " + value.toString 
     case BlockT.string_t => {var str = "string de " + size + " : "
     						value.foreach(ent => str += ent.asInstanceOf[Zamint].getval.asInstanceOf[Char])

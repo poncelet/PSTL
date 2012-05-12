@@ -24,10 +24,13 @@ abstract class Instruction () {
 	  case Apply(arg) => "apply " + arg + "\n"
 	  case Appterm(nargs, slotSize) => "appterm " + nargs + ", " + slotSize + "\n"
 	  case Return(sp) => "return " + sp + "\n" 
-	  case Restart() => "restart \n"
+	  case Restart() => "restart\n"
 	  case Grab(required) => "grab " + required + "\n"
-	  case Closure(nvars) => "closure " + nvars + "\n"
-	  case Closurerec(nfuncs, nvars) => "closurerec " + nfuncs + ", " + nvars + "\n"
+	  case Closure(nvars, pc) => "closure " + nvars + " : " + pc + "\n"
+	  case Closurerec(nfuncs, nvars, npc) => {var str = "closurerec " + nfuncs + ", " + nvars + " : "
+		  										npc.foreach(ent => (str += ent + ", "))
+		  										str += "\n"
+		  										str}
 	  case Pushoffsetclosure(arg) => "pushoffsetclosure " + arg + "\n"
 	  case Offsetclosure(arg) => "offsetclosure " + arg + "\n"
 	  case Pushoffsetclosurem(arg) => "pushoffsetclosurem " + arg + "\n"
@@ -49,8 +52,11 @@ abstract class Instruction () {
 	  case Makefloatblock(size) => "makefloatblock :size " + size + "\n"
 	  
 	  case Vectlength() => "vectlength \n"
-	  case Getvectitem() => "vectlength \n"
-	  case Setvectitem() => "vectlength \n"
+	  case Getvectitem() => "getvectitem \n"
+	  case Setvectitem() => "setvectitem \n"
+	    
+	  case Getstringchar() => "getstringchar \n"
+	  case Setstringchar() => "setstringchar \n"
 	    
 	  case Branch(flag) => "branch " + flag + "\n"
 	  case Branchif(flag) => "branchif " + flag + "\n"
@@ -62,7 +68,11 @@ abstract class Instruction () {
 	  								}
 	  case Boolnot() => "boolnot \n"
 	    
-	  case C_Call(narg) => "c_call " + narg + "\n" 
+	  case Pushtrap(trappc) => "pushtrap " + trappc + "\n"
+	  case Poptrap() => "poptrap \n"
+	  case Raise() => "raise \n"
+	    
+	  case C_Call(narg, itprim) => "c_call " + narg + "  " + itprim + "\n" 
 	  
 	  case Const(arg) => "const " + arg + "\n"
 	  case Pushconst(arg) => "pushconst " + arg + "\n"
@@ -114,8 +124,8 @@ case class Appterm(nargs : Int, slotSize : Int) extends Instruction
 case class Return(sp : Int) extends Instruction
 case class Restart extends Instruction
 case class Grab(required : Int) extends Instruction
-case class Closure(nvars : Int) extends Instruction
-case class Closurerec(nfuncs : Int, nvars : Int) extends Instruction
+case class Closure(nvars : Int, pc : Int) extends Instruction
+case class Closurerec(nfuncs : Int, nvars : Int, npc : Array[Int]) extends Instruction
 case class Pushoffsetclosure(arg : Int) extends Instruction
 case class Offsetclosure(arg : Int) extends Instruction
 case class Pushoffsetclosurem(arg : Int) extends Instruction
@@ -140,13 +150,20 @@ case class Vectlength extends Instruction
 case class Getvectitem extends Instruction
 case class Setvectitem extends Instruction
 
+case class Getstringchar extends Instruction
+case class Setstringchar extends Instruction
+
 case class Branch(flag : Int) extends Instruction
 case class Branchif(flag : Int) extends Instruction
 case class Branchifnot(flag : Int) extends Instruction
 case class Switch(sizes : Int, flags : Array[Int]) extends Instruction
 case class Boolnot extends Instruction
 
-case class C_Call(narg : Int) extends Instruction 
+case class Pushtrap(trappc : Int) extends Instruction
+case class Poptrap extends Instruction
+case class Raise extends Instruction
+
+case class C_Call(narg : Int, itprim : Int) extends Instruction 
 
 case class Const(arg : Int) extends Instruction
 case class Pushconst(arg : Int) extends Instruction

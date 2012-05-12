@@ -24,8 +24,8 @@ class StateManager {
 		//Copy de tas
 		val globtmp = new HashMap[Int, Value]()
 		MyEnv.getglob.foreach(ent => globtmp.+=(ent))
-		var envtmp = new Array[Value](4)
-		for(i<-0 to 3) envtmp(i) = thread.getenv(i)
+		var envtmp = new Array[Value](thread.sizeEnv)
+		for(i <-0 to thread.sizeEnv-1) envtmp.update(i, thread.getenv(i))
 		
 		if(chemin.length == itT) chemin += new ArrayBuffer[State](0)
 		chemin(itT) += new State(thread.getpc, stk, thread.getaccu, envtmp ,globtmp, thread.getextra)
@@ -40,13 +40,15 @@ class StateManager {
 	  val thread = MyEnv.getthread(itT)
 		// Restaurer Pile
 		thread.stack.clear
-		for(i<-0 to stateit.getsp.size-1) thread.stack.addVal(stateit.getsp(i))
+		for(i<-0 to stateit.getsp.size-1) thread.stack.push(stateit.getsp(i))
 		// Valeurs globales : Restauration des anciennes valeurs sans suppressions du tout 
 		// (évite de faire disparaître les variables d'autres threads)
 		stateit.getglob.foreach(ent=> MyEnv.getglob += (ent))
 		//EtatGlobal.setglob(new HashMap[Int, Value](stateit.getglob))
 		// Environnement
-		for(i<-0 to 3) thread.setenv(i, stateit.getenv(i)) 
+		thread.clearenv
+		stateit.getenv.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+
 		// Restaurer tas
 
 		thread.setpc(stateit.getpc)

@@ -10,6 +10,12 @@ class GlobalState {
   val glob = new HashMap[Int, Value]() // Tas
   val Threads = new ArrayBuffer[ThreadState]
   
+  val atom = Array[Value](new Zamblock(BlockT.normal_t, 0, null), new Zamblock(BlockT.foward_t, 0, null), new Zamblock(BlockT.infix_t, 0, null),
+      new Zamblock(BlockT.object_t, 0, null), new Zamblock(BlockT.closure_t, 0, null), new Zamblock(BlockT.lazy_t, 0, null), new Zamblock(BlockT.abstract_t, 0, null),
+      new Zamblock(BlockT.string_t, 0, null), new Zamblock(BlockT.double_t, 0, null), new Zamblock(BlockT.doublearray_t, 0, null), new Zamblock(BlockT.custom_t, 0, null))
+  
+  val runtime = new PrimitiveManager
+  
   /**
    * Gestion des variables globales
    */
