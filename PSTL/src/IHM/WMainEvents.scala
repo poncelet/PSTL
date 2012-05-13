@@ -2,9 +2,9 @@ package IHM
 import java.awt.event.WindowListener
 import java.awt.event.WindowEvent
 
-class WMainEvents(Thr : ZAM.ThreadService) extends WindowListener {
+class WMainEvents(Thr : Connector, it : Int) extends WindowListener {
   
-  val MyWindows = new Fenetre(Thr)
+  val MyWindows = new Fenetre(Thr, it)
   MyWindows.addWindowListener(this)
   
   	def windowActivated(event : WindowEvent) = {

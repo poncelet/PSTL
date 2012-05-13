@@ -1,7 +1,7 @@
 object Main {
 	def main(args: Array[String]) {
 	  
-	  val Simulateur = new ZAM.Simulator()
+	  val Simulateur = new ZAM.Simulator
 	  
 	  /**
 	   * Test implantation
@@ -94,7 +94,7 @@ object Main {
 	Simulateur.AST.add(new ZAM.Getglobal(0))
 	Simulateur.AST.add(new ZAM.Setvectitem)
 	
-	 Simulateur.Preparer()
+	 Simulateur.Preparer
 	 //print
 	 print(Simulateur.toString())
 	 
@@ -142,6 +142,6 @@ object Main {
 	  /**
 	   * Test graphique
 	   */
-	  val f = new IHM.WMainEvents(null)
+	  val c = new IHM.Connector
 	}
 }

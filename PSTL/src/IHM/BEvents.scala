@@ -9,7 +9,6 @@ import java.awt.Color
 
 abstract class BEvents(name: String) extends JButton(name) with ActionListener {
   addActionListener(this)
-  setAlignmentY(Component.TOP_ALIGNMENT)
   setBorder(BorderFactory.createCompoundBorder(
       BorderFactory.createLineBorder(Color.black),
       getBorder()))

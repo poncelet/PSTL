@@ -15,6 +15,7 @@ class Simulator {
   /**
    * Données corps
    */
+    val Parsor = new Parsor
     val AST = new AST(new ArrayBuffer[Instruction])
 	val Env = new GlobalState
 	val SManager = new StateManager
@@ -27,6 +28,8 @@ class Simulator {
 	  path = newpath
 	}
 	
+	def getPath = path
+	
 	def Sauvegarder() {
 	  /** code (gestion graphique) */
 	}
@@ -35,12 +38,19 @@ class Simulator {
 	  /** code (gestion graphique) */
 	}
 	
+	def getOcmlCode = ""
+	  
 	/**
 	 * Preparation de l'ast depuis le source
 	 */
-	def Preparer() = {
-	  Ready = true
+	def Preparer = {
+	  if(path != "") {
+		  Parsor.parse(path, AST)
+		  Ready = true
+	  } else Ready = true //a mettre a false
 	}
+	
+	def IsReady = Ready
 	
 	/**
 	 * Faire avancer la thread t de n pas
@@ -48,7 +58,7 @@ class Simulator {
 	 * (la sauvegarde lors d'une avancée est faites dans instruction)
 	 */
 	def Avancer(t : Int, n : Int) {
-	  if(!Ready) throw new Exception("erreur")
+	  if(!Ready) throw new Exception("Erreur Simulateur non pret")
 	  
 	  //avancer n pas
 	  for(i<-0 to n-1) {
@@ -67,7 +77,7 @@ class Simulator {
 	 * n : le nombre de pas à restaurer
 	 */
 	def Revenir(t : Int, n : Int) {
-	  if(!Ready) throw new Exception("erreur")
+	  if(!Ready) throw new Exception("Erreur Simulateur non pret")
 	  
 	  SManager.restaurer(Env, t, n)
 	  
