@@ -9,11 +9,11 @@ import javax.swing.BorderFactory
  * Afficher le code courant
  * deux onglets vue Ocaml / ZAM (avec breakpoints)
  */
-class CodeView(Thr : Connector) extends JPanel {
+class CodeView(base : Connector, it : Int) extends JPanel {
   
   val CodePane = new JTabbedPane
-  CodePane.addTab("OCaml", null, new OcamlView(Thr), null)
-  CodePane.addTab("Zam", null, new ZamView(Thr), null)
+  CodePane.addTab("OCaml", null, new OcamlView(base, it), null)
+  CodePane.addTab("Zam", null, new ZamView(base, it), null)
   
   CodePane.setBorder(BorderFactory.createRaisedBevelBorder)
   add(CodePane)

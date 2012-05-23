@@ -3,7 +3,7 @@ object Main {
 	  
 	  val Simulateur = new ZAM.Simulator
 	  
-	  /**
+	 /**
 	   * Test implantation
 	   * 5) thread, arithmetic et sauts
 	   */
@@ -96,7 +96,7 @@ object Main {
 	
 	 Simulateur.Preparer
 	 //print
-	 print(Simulateur.toString())
+	 print(Simulateur.toString)
 	 
 	 //un thread
 	 Simulateur.Env.pushthread(new ZAM.ThreadState)
@@ -110,17 +110,17 @@ object Main {
 	 Simulateur.Avancer(0, 20)
 	 println("*********************\n")
 	 println(Simulateur.printthread(0))
-	 println(Simulateur.printenv())
+	 println(Simulateur.printenv)
 	 
 	 Simulateur.Avancer(1, 21)
 	 println("*********************\n")
 	 println(Simulateur.printthread(1))
-	 println(Simulateur.printenv())
+	 println(Simulateur.printenv)
 	 
 	 Simulateur.Avancer(2, 16)
 	 println("*********************\n")
 	 println(Simulateur.printthread(2))
-	 println(Simulateur.printenv())
+	 println(Simulateur.printenv)
 	 
 	 println("*********************\n")
 	 println("**	apres switch  **\n")
@@ -128,17 +128,20 @@ object Main {
 	 Simulateur.Avancer(1, 6)
 	 println("*********************\n")
 	 println(Simulateur.printthread(1))
-	 println(Simulateur.printenv())
+	 println(Simulateur.printenv)
 	 
 	 Simulateur.Avancer(2, 6)
 	 println("*********************\n")
 	 println(Simulateur.printthread(2))
-	 println(Simulateur.printenv())
+	 println(Simulateur.printenv)
 	 
 	 Simulateur.Avancer(0, 8)
 	 println("*********************\n")
 	 println(Simulateur.printthread(0))
-	 println(Simulateur.printenv())
+	 println(Simulateur.printenv)
+
+	 
+	  
 	  /**
 	   * Test graphique
 	   */

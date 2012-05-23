@@ -30,14 +30,6 @@ class Simulator {
 	
 	def getPath = path
 	
-	def Sauvegarder() {
-	  /** code (gestion graphique) */
-	}
-	
-	def Charger(s : String){
-	  /** code (gestion graphique) */
-	}
-	
 	def getOcmlCode = ""
 	  
 	/**
@@ -83,10 +75,14 @@ class Simulator {
 	  
 	}
 	
-	override def toString = AST.toString()
+	def Restart = {
+	  
+	}
+	
+	override def toString = AST.toString
 	
 	def printthread(t: Int) = Env.printT(t)
 	
-	def printenv() = Env.toString()
+	def printenv = Env.toString
 	
 }

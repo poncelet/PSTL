@@ -161,8 +161,8 @@ class Evaluator {
 	
 	case Getfield(arg) => thread.setaccu(thread.getaccu.asInstanceOf[Zamblock].at(arg))
 	case Getfloatfield(arg) => thread.setaccu(thread.getaccu.asInstanceOf[Zamblock].at(arg)) //double_t clone ?
-	case Setfield(arg) => thread.getaccu.asInstanceOf[Zamblock].set(arg, thread.stack.getVal)
-	case Setfloatfield(arg) => thread.getaccu.asInstanceOf[Zamblock].set(arg, thread.stack.getVal); thread.setaccu(new Zamint(0)) //double_t
+	case Setfield(arg) => thread.getaccu.asInstanceOf[Zamblock].set(arg, thread.stack.getVal);thread.stack.pop; thread.setaccu(new Zamint(0)) 
+	case Setfloatfield(arg) => thread.getaccu.asInstanceOf[Zamblock].set(arg, thread.stack.getVal);thread.stack.pop;thread.setaccu(new Zamint(0)) //double_t
 	case Pushatom(arg) => thread.stack.push(thread.getaccu); thread.setaccu(env.atom(arg))//accu = atom(arg)
 	case Atom(arg) => thread.setaccu(env.atom(arg))//accu = Tag ? // Transform. int > Value = blockT.getValue(arg)
 	case Makeblock(size, typ) => { 

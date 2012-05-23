@@ -7,7 +7,7 @@ import scala.collection.mutable.ArrayBuffer
  * 
  */
 class GlobalState {
-  val glob = new HashMap[Int, Value]() // Tas
+  val glob = new HashMap[Int, Value] // Tas
   val Threads = new ArrayBuffer[ThreadState]
   
   val atom = Array[Value](new Zamblock(BlockT.normal_t, 0, null), new Zamblock(BlockT.foward_t, 0, null), new Zamblock(BlockT.infix_t, 0, null),

@@ -21,4 +21,6 @@ def add(instr : Instruction) = tree += instr
  */
 def get(pc : Int) : Instruction = tree(pc)
 
+def size  : Int = tree.size
+
 }

@@ -5,8 +5,8 @@ import javax.swing.JScrollPane
 import javax.swing.JTable
 import java.awt.Dimension
 
-class EnvView(Thr : Connector) extends JPanel{
-  val Env = Thr.getEnv
+class EnvView(base : Connector) extends JPanel{
+  val Env = base.getEnv
   var table : JTable = null
   if(Env != null) {
     val size = Env.getglob.size
@@ -35,6 +35,9 @@ class EnvView(Thr : Connector) extends JPanel{
 	class MyModel(size : Int) extends AbstractTableModel {
           private val columnNames = Array("Field", "Valeur")
           private var data = new Array[Array[Object]](size)
+           for(i<-0 to size-1) {
+            data(i) = new Array[Object](2)
+          }
  
         def getColumnCount = columnNames.size
  

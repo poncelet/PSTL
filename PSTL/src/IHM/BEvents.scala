@@ -7,7 +7,7 @@ import java.awt.Component
 import javax.swing.BorderFactory
 import java.awt.Color
 
-abstract class BEvents(name: String) extends JButton(name) with ActionListener {
+abstract class BEvents(name : String) extends JButton(name) with ActionListener {
   addActionListener(this)
   setBorder(BorderFactory.createCompoundBorder(
       BorderFactory.createLineBorder(Color.black),
@@ -22,12 +22,31 @@ abstract class BEvents(name: String) extends JButton(name) with ActionListener {
     action(this, e); }
   
   def action(b : BEvents, e : ActionEvent) = b match {
-    case ExecBtn(n) => printf("exec")
-    case FowardBtn(n) => printf("Un pas en avant")
-    case BackBtn(n) => printf("Un pas en arriere")
-    case ToBrkBtn(n) => printf("Avancer jusqu'au prochain Break Point")
-    case RestartBtn(n) => printf("Redemarrer le programme")
-    case OptBtn(n) => printf("Option")
+    case ExecBtn(n, base, it) => {
+      base.prepare
+      printf("exec")
+      //afficher code
+    }
+    case FowardBtn(n, base, it) => {
+      base.step(it)
+      println("mooooove")
+      //reafficher code
+    }
+    case BackBtn(n, base, it) => {
+      base.backstep(it)
+      printf("Un pas en arriere")
+      //reafficher code
+    }
+    case ToBrkBtn(n, base, it) => {
+      base.avance(it)
+      printf("Avancer jusqu'au prochain Break Point")
+      //reafficher code
+    }
+    case RestartBtn(n, base, it) => {
+      base.restart
+      printf("Redemarrer le programme")
+    }
+    case OptBtn(n, base, it) => printf("Option")
     case _ => printf("Inconnu")
  }
   
@@ -36,9 +55,9 @@ abstract class BEvents(name: String) extends JButton(name) with ActionListener {
   }*/
 }
 
-case class ExecBtn(name: String) extends BEvents(name)
-case class FowardBtn(name: String) extends BEvents(name)
-case class BackBtn(name: String) extends BEvents(name)
-case class ToBrkBtn(name: String) extends BEvents(name)
-case class RestartBtn(name: String) extends BEvents(name)
-case class OptBtn(name: String) extends BEvents(name)
+case class ExecBtn(name: String, base : Connector, it : Int) extends BEvents(name)
+case class FowardBtn(name: String, base : Connector, it : Int) extends BEvents(name)
+case class BackBtn(name: String, base : Connector, it : Int) extends BEvents(name)
+case class ToBrkBtn(name: String, base : Connector, it : Int) extends BEvents(name)
+case class RestartBtn(name: String, base : Connector, it : Int) extends BEvents(name)
+case class OptBtn(name: String, base : Connector, it : Int) extends BEvents(name)

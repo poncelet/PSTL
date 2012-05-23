@@ -1,19 +1,35 @@
 package IHM
 import javax.swing.JPanel
 import java.awt.BorderLayout
-import javax.swing.JComboBox
 import javax.swing.JCheckBox
 import javax.swing.table.AbstractTableModel
 import javax.swing.JScrollPane
 import javax.swing.JTable
 import java.awt.Dimension
+import scala.collection.mutable.ArrayBuffer
+import javax.swing.JComboBox
 
-class DataView (Thr : Connector, it : Int) extends JPanel {
+class DataView (base : Connector, it : Int) extends JPanel {
 	setLayout(new BorderLayout)
-	add(new JCheckBox, BorderLayout.NORTH)
-	add(new JComboBox, BorderLayout.NORTH)
+	val Manager = new DataManager(this)
+	val NPanel = new JPanel
 	
-	val thread = Thr.getThread(it)
+	val Check = new JCheckBox
+	Check.setSelected(true)
+	Check.addItemListener(Manager)
+	NPanel.add(Check)
+	
+	val Vars = base.getTables(it)
+	val JCombo = new JComboBox()
+	JCombo.setEditable(false)
+	Vars.foreach(ent => JCombo.addItem(ent))
+	JCombo.addActionListener(Manager)
+	NPanel.add(JCombo)
+	
+	
+	add(NPanel, BorderLayout.NORTH)
+	
+	val thread = base.getThread(it)
 	var table : JTable = null
 	if(thread != null) {
 		val size = thread.stack.getSp-1
@@ -41,10 +57,15 @@ class DataView (Thr : Connector, it : Int) extends JPanel {
   /*table.getSelectionModel().addListSelectionListener(new RowListener());
   table.getColumnModel().getSelectionModel().addListSelectionListener(new ColumnListener());*/
   add(new JScrollPane(table))
+  
+  def getTab = table
 	
 	class MyModel(size : Int) extends AbstractTableModel {
           private val columnNames = Array("Value", "")
           private var data = new Array[Array[Object]](size)
+          for(i<-0 to size-1) {
+            data(i) = new Array[Object](2)
+          }
  
         def getColumnCount = columnNames.size
  

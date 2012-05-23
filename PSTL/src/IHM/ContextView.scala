@@ -14,8 +14,8 @@ import javax.swing.JScrollPane
 /**
  * Affichage du context de la thread courante idée de base (pile et accumulateur)
  */
-class ContextView(Thr : Connector, it : Int) extends JPanel {
-  val thread = Thr.getThread(it)
+class ContextView(base : Connector, it : Int) extends JPanel {
+  val thread = base.getThread(it)
   var table : JTable = null
   if(thread != null) {
     val size = thread.stack.getSp-1
@@ -47,6 +47,9 @@ class ContextView(Thr : Connector, it : Int) extends JPanel {
 	class MyModel(size : Int) extends AbstractTableModel {
           private val columnNames = Array("Stack", "Accu")
           private var data = new Array[Array[Object]](size)
+           for(i<-0 to size-1) {
+            data(i) = new Array[Object](2)
+          }
  
         def getColumnCount = columnNames.size
  

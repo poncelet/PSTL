@@ -26,7 +26,7 @@ class Zamint (value : Int) extends Value {
 }
 
 /**
- * Un entier signé
+ * Un entier non signé
  */
 class Zamuint (value : Int) extends Value {
   def getval = value

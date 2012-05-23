@@ -3,24 +3,25 @@ import javax.swing.JButton
 import javax.swing.JTabbedPane
 import java.awt.event.ActionListener
 import java.awt.event.ActionEvent
+import javax.swing.JPanel
 
-class ButtonTabComponent(Thr : Connector, pane : JTabbedPane) extends JButton("x") with ActionListener {
+class ButtonTabComponent(base : Connector, it : Int,  pane : JTabbedPane, mylabel : JPanel) extends JButton("x") with ActionListener {
   var i =  0
-  var name = ""
   addActionListener(this)
     
   def init = {
-    pane.indexOfTabComponent(ButtonTabComponent.this);
+    i = pane.indexOfTabComponent(mylabel);
     if( (i == -1)) throw new Exception("Erreur ButtonTabComponent init")
-    name = pane.getTitleAt(i)
-    if(name.equals("main")) setToolTipText("Fermer le programme")
+    if(it == 0) setToolTipText("Fermer le programme")
     else setToolTipText("Ouvrir ce thread dans une nouvelle fenetre")
   }
   
   def actionPerformed(e : ActionEvent) = {
-    if(name.equals("main")) println("Fin!"); exit(0)
+    if(it == 0) base.Fin
     //creer fenetre
-    Thr.maxThread(name)
+    val views = pane.getComponentAt(i).asInstanceOf[MyViewPanel].getviews
+    base.maxThread(it, views)
     pane.remove(i)
+    pane.repaint()
    }
 }
