@@ -5,32 +5,38 @@ import java.awt.event.ItemEvent
 import java.awt.event.ActionEvent
 import java.awt.event.ItemListener
 import javax.swing.JCheckBoxMenuItem
+import javax.swing.JPanel
 
-class ViewsManager(Views : ArrayBuffer[Int]) extends ItemListener {
+class ViewsManager(Views : ArrayBuffer[Views], it : Int) extends ItemListener {
   
   val Listener = new ComponentListening(this)
   val Boxes = new Array[JCheckBoxMenuItem](5)
   private var bind = 0
   var Pan : MyViewPanel = null
-  
-  
-  def add(v : Int) = Views += v
+
+  def add(v : Views) = Views += v
   
   def sub(v : Int) = {
     var i = 0
     var it = 0
     Views.foreach(ent =>{
-      if(Views(i) == v) it = i
+      if(Views(i).getId == v) it = i
       i = i + 1})
       Views.remove(it)
     }
   
-  def contains(v : Int) = Views.contains(v)
+  def contains(id : Int) = {
+    var b = false
+    Views.foreach(ent=>{if(ent.getId == id) b = true})
+    b
+  }
   
   def size = Views.size
   
-  def get(i : Int) = Views(i)
+  def getViewId(i : Int) : Int = {Views(i).getId % 100}
   
+  def getThreadId(i : Int) = {Views(i).getId / 100}
+		  
   def bindBox(cbMenuItem : JCheckBoxMenuItem) = {
     Boxes(bind) = cbMenuItem
     bind = bind + 1
@@ -53,8 +59,8 @@ class ViewsManager(Views : ArrayBuffer[Int]) extends ItemListener {
         itview = 4
     }
    
-    if (e.getStateChange() == ItemEvent.DESELECTED) sub(itview)
-    else add(itview)
+    if (e.getStateChange() == ItemEvent.DESELECTED) sub(itview + (it * 100))
+    else Pan.addView(itview + (it * 100))
     //reafficher
     Pan.modif
 }
@@ -78,16 +84,17 @@ class ViewsManager(Views : ArrayBuffer[Int]) extends ItemListener {
         if(str.equals("class IHM.DataView")) {
       v = 4
     }
+    v = v + (100 * it)
     var i = 0
-    var it = 0
+    var j = 0
     Views.foreach(ent =>{
-      if(Views(i) == v) it = i
+      if(Views(i).getId == v) j = i
       i = i + 1})
-   if( ((it + change) >= 0) && ((it + change) < (Views.size - 1))) {
-     Views(it) = Views(it + change)
-     Views(it + change) = v
+   if( ((j + change) >= 0) && ((j + change) <= (Views.size - 1))) {
+     val tmp = Views(j)
+     Views(j) = Views(j + change)
+     Views(j + change) = tmp
      Pan.modif
-     Pan.setVisible(true)
    }
   }
 

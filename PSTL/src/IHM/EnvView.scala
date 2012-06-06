@@ -4,52 +4,72 @@ import javax.swing.table.AbstractTableModel
 import javax.swing.JScrollPane
 import javax.swing.JTable
 import java.awt.Dimension
+import scala.collection.mutable.ArrayBuffer
 
-class EnvView(base : Connector) extends JPanel{
+class EnvView(base : Connector) extends Views {
   val Env = base.getEnv
-  var table : JTable = null
-  if(Env != null) {
-    val size = Env.getglob.size
-    if(size > 0) {
-      val t = new MyModel(size)
-      var i = 0
-      Env.getglob.foreach(ent => {t.setValueAt(i,0, ent._1.toString);t.setValueAt(i,1, ent._2.toString);i = i + 1})
-      table = new JTable(t)
-      add(table)
-    }
-    else {
-      table = new JTable(new MyModel(0))
-      add(table)
-    }
-  }
-  else {
-    table = new JTable(new MyModel(0))
-    add(table)
-  }
+  var t = new MyModel(1)
+  var table = new JTable(t)
+  
+  MajView
+  
   table.setPreferredScrollableViewportSize(new Dimension(200, 50))
   table.setFillsViewportHeight(true)
-  /*table.getSelectionModel().addListSelectionListener(new RowListener());
-  table.getColumnModel().getSelectionModel().addListSelectionListener(new ColumnListener());*/
   add(new JScrollPane(table))
+  
+  def getId = 2
+  
+   override def MajView = {
+    
+    if(Env != null) {
+     val size = Env.getglob.size
+     val s = t.getRowCount
+     
+     if(s > 0) {
+       for(i<-0 to s-1) t.removeRow(0)
+       t.fireTableStructureChanged
+     }
+     
+     if(size > 0) {
+       
+    	Env.getglob.foreach(ent => {t.addRow(Array[Object](ent._1.toString, Normalize(ent._2)))})
+      }
+    }
+  }
+  
+  def Normalize(v : ZAM.Value) = {
+    var st = ""
+    if(v.isInstanceOf[ZAM.Zamblock]) {
+    	   st += "T : " +  v.asInstanceOf[ZAM.Zamblock].gettag + " " + v.asInstanceOf[ZAM.Zamblock].getsize
+    	 }
+    else st += v.toString
+    st
+  }
   
 	class MyModel(size : Int) extends AbstractTableModel {
           private val columnNames = Array("Field", "Valeur")
-          private var data = new Array[Array[Object]](size)
-           for(i<-0 to size-1) {
-            data(i) = new Array[Object](2)
-          }
+          private var data = new ArrayBuffer[Array[Object]](size)
  
-        def getColumnCount = columnNames.size
+        override def getColumnCount = columnNames.size
  
-        def getRowCount = data.size
+        override def getRowCount = if(data == null) 0 else data.size
  
         override def getColumnName(col : Int) = columnNames(col)
  
-        def getValueAt(row : Int, col : Int) = data(row)(col)
+        override def getValueAt(row : Int, col : Int) = data(row)(col)
         
-        def setValueAt(row : Int, col : Int, v : Object) = data(row)(col) = v
+         def addRow(v : Array[Object]) = {
+          data += v
+          fireTableRowsInserted(data.size-1, data.size -1)
+        }
+          
+         def removeRow(i : Int) = {data.remove(i)}
+        
+        def setValueAt(row : Int, col : Int, v : Object) = {data(row)(col) = v;fireTableCellUpdated(row, col)}
        
-        override def getColumnClass(c : Int) = getValueAt(0, c).getClass()
+        override def getColumnClass(c : Int) = getValueAt(0, c).getClass
+ 
+        override def isCellEditable(row : Int,col : Int) = true
  
     }
 }

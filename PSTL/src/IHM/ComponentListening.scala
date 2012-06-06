@@ -36,13 +36,16 @@ class ComponentListening(manager : ViewsManager) extends MouseListener with Mous
 	var Y = y - arg.getY
 	if(Y < 0) Y = (Y * -1)
 	
-	if(X > Y) { 
-	  if( (x - arg.getX) > 0) manager.change(arg.getComponent.getClass.toString, -1)
-	  else manager.change(arg.getComponent.getClass.toString, 1)
-	}
-	else {
-	  if( (y - arg.getY) > 0) manager.change(arg.getComponent.getClass.toString, -2)
-	  else manager.change(arg.getComponent.getClass.toString, 2)
+	if((X > 50) || (Y > 50)) {
+	
+		if(X > Y) { 
+			if( (x - arg.getX) > 0) manager.change(arg.getComponent.getClass.toString, -1)
+			else manager.change(arg.getComponent.getClass.toString, 1)
+		}
+		else {
+			if( (y - arg.getY) > 0) manager.change(arg.getComponent.getClass.toString, -2)
+			else manager.change(arg.getComponent.getClass.toString, 2)
+		}
 	}
 	}
 }

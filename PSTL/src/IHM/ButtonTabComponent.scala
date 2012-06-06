@@ -17,7 +17,8 @@ class ButtonTabComponent(base : Connector, it : Int,  pane : JTabbedPane, mylabe
   }
   
   def actionPerformed(e : ActionEvent) = {
-    if(it == 0) base.Fin
+    i = pane.indexOfTabComponent(mylabel);
+    if(i == 0) base.Fin
     //creer fenetre
     val views = pane.getComponentAt(i).asInstanceOf[MyViewPanel].getviews
     base.maxThread(it, views)

@@ -1,5 +1,5 @@
 package ZAM
 
-class ErreurZam(err : String) extends Exception(err) {
-  
+class ErreurZam(err : String, env : GlobalState) extends Exception(err) {
+  env.addErrStream(err)
 }

@@ -27,7 +27,10 @@ class StateManager {
 		var envtmp = new Array[Value](thread.sizeEnv)
 		for(i <-0 to thread.sizeEnv-1) envtmp.update(i, thread.getenv(i))
 		
-		if(chemin.length == itT) chemin += new ArrayBuffer[State](0)
+		if(chemin.length <= itT) {
+		  while(chemin.length <= itT)
+			  chemin += new ArrayBuffer[State](0)
+		}
 		chemin(itT) += new State(thread.getpc, stk, thread.getaccu, envtmp ,globtmp, thread.getextra)
 	}
 	
@@ -55,7 +58,7 @@ class StateManager {
 		thread.setaccu(stateit.getaccu)
 		thread.setextra(stateit.getextra)
 		// Restaurer le chemin
-		for(i<-0 to n) chemin(itT).remove(chemin(itT).length-1)
+		for(i<-0 to n-1) chemin(itT).remove(chemin(itT).length-1)
 	}
 
 }

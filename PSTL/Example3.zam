@@ -1,0 +1,62 @@
+Const 4
+setglobal 0
+const 2
+pushgetglobal 0
+integer_comparision EQ
+branchif 26
+const 1
+pushgetglobal 0
+subint
+setglobal 0
+getglobal 0
+pushconst 3
+integer_comparision LEINT
+branchifnot 9
+const 2
+pushconst 2
+addint
+pushconst 6
+pushconst 6
+mulint
+pushconst 2
+branch 22
+const 1
+negint
+pushconst 3
+pushconst 9
+divint
+pushconst 2
+pushconst 10
+modint
+integer_branch_comparision 0 13 BEQ
+const 2
+pushconst 6
+andint
+pushconst 2
+pushconst 4
+orint
+pushconst 2
+pushconst 6
+xorint
+integer_comparision GTINT
+boolnot
+branchifnot 205
+switch 0 [1, 6, 11]
+const 2
+pushconst 2
+lslint
+makeblock 3 double_t
+setglobal 0
+const 2
+pushconst 2
+lsrint
+getglobal 0
+vectlength
+const 2
+pushconst 2
+asrint
+const 2
+push
+getglobal 0
+setvectitem
+

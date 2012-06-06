@@ -29,7 +29,7 @@ class EvaluateurTest {
 		Simulateur.AST.add(new ZAM.Const(0))
 		
 		Simulateur.AST.add(new ZAM.Acc(0))
-		Simulateur.Preparer
+		Simulateur.Preparer(0)
 		Simulateur.Env.pushthread(new ZAM.ThreadState)
 		
 		try{
@@ -51,7 +51,7 @@ class EvaluateurTest {
 		Simulateur.AST.add(new ZAM.Const(4))
 		
 		Simulateur.AST.add(new ZAM.Push())
-		Simulateur.Preparer
+		Simulateur.Preparer(0)
 		Simulateur.Env.pushthread(new ZAM.ThreadState)
 		
 		try{

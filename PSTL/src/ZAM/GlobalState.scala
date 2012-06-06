@@ -16,6 +16,9 @@ class GlobalState {
   
   val runtime = new PrimitiveManager
   
+  var outStream = ""
+  var errStream = ""
+  
   /**
    * Gestion des variables globales
    */
@@ -29,11 +32,19 @@ class GlobalState {
   def pushthread(t : ThreadState) = Threads += t
   def removethread(i : Int) = Threads.remove(i)
   def getthread(i : Int) : ThreadState = Threads(i)
+  
+  def getOutStream = outStream
+  def getErrStream = errStream
+  def addOutStream(mess : String) = outStream += mess
+  def addErrStream(mess : String) = errStream += mess
+  
+  
  
   override def toString() = { var str = "Environnement global : "
 	  						if(glob.size == 0) str = str + "[]"
 	  						else str=str + glob.toString
 	  						str
   							}
+  
   def printT(t : Int) = "Thread n°" + t + "::" + Threads(t).toString()
 }

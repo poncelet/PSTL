@@ -3,7 +3,7 @@ import java.awt.event.WindowListener
 import java.awt.event.WindowEvent
 import scala.collection.mutable.ArrayBuffer
 
-class WMainEvents(v : ArrayBuffer[Int], base : Connector, it : Int) extends WindowListener {
+class WMainEvents(v : ArrayBuffer[Views], base : Connector, it : Int) extends WindowListener {
   
   val MyWindows = new Fenetre(v, base, it)
   MyWindows.addWindowListener(this)
@@ -37,11 +37,14 @@ class WMainEvents(v : ArrayBuffer[Int], base : Connector, it : Int) extends Wind
 	
 	def getviews = MyWindows.getviews
 	
-	def addTab(it : Int, v : ArrayBuffer[Int]) = MyWindows.addTab(it, v)
+	def addTab(it : Int, v : ArrayBuffer[Views]) = MyWindows.addTab(it, v)
 	
-	def max(v : ArrayBuffer[Int]) = {
+	def max(v : ArrayBuffer[Views]) = {
 	  MyWindows.bindViews(v)
 	  MyWindows.setVisible(true)
 	}
 	
+	def MajView = MyWindows.MajView
+	
+	def MajPan = MyWindows.MajPan
 }

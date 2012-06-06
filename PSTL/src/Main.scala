@@ -3,7 +3,7 @@ object Main {
 	  
 	  val Simulateur = new ZAM.Simulator
 	  
-	 /**
+	  /**
 	   * Test implantation
 	   * 5) thread, arithmetic et sauts
 	   */
@@ -94,7 +94,7 @@ object Main {
 	Simulateur.AST.add(new ZAM.Getglobal(0))
 	Simulateur.AST.add(new ZAM.Setvectitem)
 	
-	 Simulateur.Preparer
+	 Simulateur.Preparer(0)
 	 //print
 	 print(Simulateur.toString)
 	 
@@ -139,6 +139,7 @@ object Main {
 	 println("*********************\n")
 	 println(Simulateur.printthread(0))
 	 println(Simulateur.printenv)
+
 
 	 
 	  

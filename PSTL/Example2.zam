@@ -1,0 +1,15 @@
+Const ‘d’
+Pushconst ‘l’
+Pushconst ‘r’
+Pushconst ‘o’
+Pushconst ‘W’
+Pushconst ‘o’
+Pushconst ‘l’
+Pushconst ‘l’
+Pushconst ‘e’
+Pushconst ‘h’
+Makebloc 10 string_t
+Push
+Setglobal 3
+Getglobalfield 3 5
+Setglobal  3

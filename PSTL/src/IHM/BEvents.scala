@@ -23,28 +23,19 @@ abstract class BEvents(name : String) extends JButton(name) with ActionListener 
   
   def action(b : BEvents, e : ActionEvent) = b match {
     case ExecBtn(n, base, it) => {
-      base.prepare
-      printf("exec")
-      //afficher code
+      base.prepare(0)
     }
     case FowardBtn(n, base, it) => {
       base.step(it)
-      println("mooooove")
-      //reafficher code
     }
     case BackBtn(n, base, it) => {
       base.backstep(it)
-      printf("Un pas en arriere")
-      //reafficher code
     }
     case ToBrkBtn(n, base, it) => {
       base.avance(it)
-      printf("Avancer jusqu'au prochain Break Point")
-      //reafficher code
     }
     case RestartBtn(n, base, it) => {
       base.restart
-      printf("Redemarrer le programme")
     }
     case OptBtn(n, base, it) => printf("Option")
     case _ => printf("Inconnu")

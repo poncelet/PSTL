@@ -26,57 +26,56 @@ import scala.collection.mutable.ArrayBuffer
 import javax.swing.JLabel
 import javax.swing.JCheckBoxMenuItem
 
-class Fenetre (v : ArrayBuffer[Int], base : Connector, it : Int) extends JFrame {
+class Fenetre (v : ArrayBuffer[Views], base : Connector, it : Int) extends JFrame {
   
 	val conteneurP = getContentPane
 	
 	var MyViews : ViewsManager = null
-	if(v != null) MyViews = new  ViewsManager(v)
-	else MyViews = new ViewsManager(ArrayBuffer[Int](0,1,2,3,4))
+	if(v != null) MyViews = new  ViewsManager(v, it)
+	else {
+	  val id = it * 100
+	  MyViews = new ViewsManager(new ArrayBuffer[Views], it)
+	}
 	
 	val CenterTab = new JTabbedPane
 	
 	setName(base.getThreadName(it))
 	
+	val mB = new JMenuBar
+	
 	if(it == 0) {
 	
-	val mB = new JMenuBar
-	val menu = new JMenu("File")
+	val Fmenu = new JMenu("File")
 	val submenu = new JMenu("Property")
 	
 	/* Menu a faire seulement pour la premiere fenetre */
 	val NewMenu = new JMenuItem("New")
 	NewMenu.addActionListener(new MyMenuListener("New", base))
-	menu.add(NewMenu)
+	Fmenu.add(NewMenu)
 	val OpenMenu = new JMenuItem("Open")
 	OpenMenu.addActionListener(new MyMenuListener("Open", base))
-	menu.add(OpenMenu)
+	Fmenu.add(OpenMenu)
 	val SaveMenu = new JMenuItem("Save")
 	SaveMenu.addActionListener(new MyMenuListener("Save", base))
-	menu.add(SaveMenu)
-	menu.addSeparator
-	
-	var cbMenuItem : JCheckBoxMenuItem = null
-	for(i<-0 to 4) {
-	  i match {
-	    case 0 => cbMenuItem = new JCheckBoxMenuItem("Code View");
-	    case 1 => cbMenuItem = new JCheckBoxMenuItem("Context View");
-	    case 2 => cbMenuItem = new JCheckBoxMenuItem("Global View");
-	    case 3 => cbMenuItem = new JCheckBoxMenuItem("Consol View");
-	    case 4 => cbMenuItem = new JCheckBoxMenuItem("Data View");
-	  }
-	  MyViews.bindBox(cbMenuItem)
-	  if(MyViews.contains(i)) cbMenuItem.setSelected(true)
-	  cbMenuItem.addItemListener(MyViews)
-	  menu.add(cbMenuItem)
-	}
-
-	menu.addSeparator
+	Fmenu.add(SaveMenu)
+	Fmenu.addSeparator
 	val QuitMenu = new JMenuItem("Quit")
 	QuitMenu.addActionListener(new MyMenuListener("Quit", base))
-	menu.add(QuitMenu)
-	mB.add(menu)
-	setJMenuBar(mB)
+	Fmenu.add(QuitMenu)
+	
+	mB.add(Fmenu)
+	
+	val Emenu = new JMenu("Examples")
+	val E1Menu = new JMenuItem("Ex1")
+	E1Menu.addActionListener(new MyMenuListener("E1", base))
+	Emenu.add(E1Menu)
+	val E2Menu = new JMenuItem("Ex2")
+	E2Menu.addActionListener(new MyMenuListener("E2", base))
+	Emenu.add(E2Menu)
+	val E3Menu = new JMenuItem("Ex3")
+	E3Menu.addActionListener(new MyMenuListener("E3", base))
+	Emenu.add(E3Menu)
+	mB.add(Emenu)
 	}
 	  
 	/*Panel de boutons*/
@@ -105,7 +104,7 @@ class Fenetre (v : ArrayBuffer[Int], base : Connector, it : Int) extends JFrame 
 			if(base.threadMin(i)) {
 				val ViewPanel = new MyViewPanel(base, it, MyViews)
 				MyViews.bindPan(ViewPanel)
-				CenterTab.addTab("", null, ViewPanel, "Etat de " + base.getThreadName(i))
+				CenterTab.addTab("", null, ViewPanel, "State of " + base.getThreadName(i))
 				val TabPanel = new JPanel
 				TabPanel.add(new JLabel(base.getThreadName(i)))
 				CenterTab.setTabComponentAt(i, TabPanel)
@@ -118,43 +117,68 @@ class Fenetre (v : ArrayBuffer[Int], base : Connector, it : Int) extends JFrame 
 	}
 	else {
 	  val ViewPanel = new MyViewPanel(base, it, MyViews)
+	  MyViews.bindPan(ViewPanel)
 	  conteneurP.add(ViewPanel, BorderLayout.CENTER)
 	}
-	 
-	/*setFont()*/
-	/*setIconImage(new Image)*/
-	setMinimumSize(new Dimension(600, 200))
-	setVisible(true)
 	
-	override def paint(g :Graphics) = {
-		val image = ImageIO.read(new File("../Images/Fond.jpg"))
-		g.drawImage(image, 0, 0, null)
-		paintComponents(g)
+	val Vmenu = new JMenu("View")
+	
+	var cbMenuItem : JCheckBoxMenuItem = null
+	var idThread = 0
+	for(i<-0 to 4) {
+	  i match {
+	    case 0 => cbMenuItem = new JCheckBoxMenuItem("Code View");
+	    case 1 => cbMenuItem = new JCheckBoxMenuItem("Context View");
+	    case 2 => cbMenuItem = new JCheckBoxMenuItem("Global View");
+	    case 3 => cbMenuItem = new JCheckBoxMenuItem("Consol View");
+	    case 4 => cbMenuItem = new JCheckBoxMenuItem("Data View");
+	  }
+	  MyViews.bindBox(cbMenuItem)
+	  if( (i == 2) || (i == 3)) idThread = 0
+	  else idThread = it
+	  if(MyViews.contains((idThread*100)+i)) cbMenuItem.setSelected(true)
+	  cbMenuItem.addItemListener(MyViews)
+	  Vmenu.add(cbMenuItem)
 	}
+	
+	mB.add(Vmenu)
+	setJMenuBar(mB)
+	 
+	setMinimumSize(new Dimension(800, 900))
+	setVisible(true)
 	
 	def getviews = MyViews.getviews
 	
-	def addTab(it : Int, v : ArrayBuffer[Int]) {
-		val ViewPanel = new MyViewPanel(base, it, new ViewsManager(v))
-		MyViews.bindPan(ViewPanel)
-		CenterTab.addTab("", null, ViewPanel, "Etat de " + base.getThreadName(it))
+	def addTab(it : Int, v : ArrayBuffer[Views]) {
+		val ViewPanel = new MyViewPanel(base, it, new ViewsManager(v, it)) //Pas de modification menu
+		CenterTab.addTab("", null, ViewPanel, "State of " + base.getThreadName(it))
 		val TabPanel = new JPanel
 		TabPanel.add(new JLabel(base.getThreadName(it)))
 		val end = new ButtonTabComponent(base, it, CenterTab, TabPanel)
 		TabPanel.add(end)
-		val i = CenterTab.getTabCount() - 1
+		val i = CenterTab.getTabCount - 1
 		CenterTab.setTabComponentAt(i, TabPanel)
 		end.init
-		CenterTab.repaint()
+		CenterTab.getTabComponentAt(i).repaint()
+		setVisible(true)
 	}
 	
-	def bindViews(v : ArrayBuffer[Int]) = {
-	  MyViews = new  ViewsManager(v)
+	def bindViews(v : ArrayBuffer[Views]) = {
+	  MyViews = new  ViewsManager(v, it)
 	  conteneurP.removeAll
 	  val ViewPanel = new MyViewPanel(base, it, MyViews)
+	  MyViews.bindPan(ViewPanel)
 	  conteneurP.add(BtnPanel, BorderLayout.NORTH)
 	  conteneurP.add(ViewPanel, BorderLayout.CENTER)
-	  conteneurP.repaint()
+	}
+	
+	//mettre les views en array[views]
+	def MajView = {
+	  MyViews.getviews.foreach(ent=>{ent.MajView})
+	}
+	
+	def MajPan = {
+	  CenterTab.updateUI
 	}
     
 }

@@ -1,0 +1,10 @@
+Const 2
+Push
+Const 4
+Push
+Constint 50
+Setglobal 3
+Constint 10
+Setglobal 2
+Constint 55
+Setglobal 3

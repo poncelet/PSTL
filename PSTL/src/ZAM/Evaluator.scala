@@ -33,7 +33,7 @@ class Evaluator {
 	case Pushenvacc(arg) => thread.stack.push(thread.getaccu); thread.setaccu(thread.getenv(arg))
 	
 	case Push_Retaddr(pc) => {	thread.stack.push(new Zamint(thread.getextra))
-								val OldEnv = new Array[Value](thread.sizeEnv)
+								val OldEnv = new MyArray(thread.sizeEnv)
 								for(i <-0 to thread.sizeEnv-1) OldEnv.update(i, thread.getenv(i))
 								thread.stack.push(new Zamblock(BlockT.normal_t, thread.sizeEnv, OldEnv))
 								thread.stack.push(new Zamint(thread.getpc + pc))}
@@ -42,7 +42,7 @@ class Evaluator {
 								for(i<-1 to arg)  args(i-1) = thread.stack.get(i-1)
 								
 								thread.stack.push(new Zamint(thread.getextra)) //sp[3 + (arg-1)]
-								val OldEnv = new Array[Value](thread.sizeEnv)
+								val OldEnv = new MyArray(thread.sizeEnv)
 								for(i <-0 to thread.sizeEnv) OldEnv.update(i, thread.getenv(i))
 								thread.stack.push(new Zamblock(BlockT.normal_t, thread.sizeEnv, OldEnv)) //sp[2 (arg-1)]
 								thread.stack.push(new Zamint(thread.getpc)) //sp[1 + (arg-1)]
@@ -52,7 +52,7 @@ class Evaluator {
 							val accublock = thread.getaccu.asInstanceOf[Zamblock]
 							thread.setpc(accublock.at(0).asInstanceOf[Zamint].getval) //code val ...
 							thread.clearenv
-							accublock.getval.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+							accublock.getval.tab.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
 						}//check_stack
 	case Appterm(nargs, slotSize) => {
 	  val sp = thread.stack.getSp
@@ -63,7 +63,7 @@ class Evaluator {
 	  val accublock = thread.getaccu.asInstanceOf[Zamblock]
 	  thread.setpc(accublock.at(0).asInstanceOf[Zamint].getval)
 	  thread.clearenv
-	  accublock.getval.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+	  accublock.getval.tab.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
 	  	}
 	case Return(sp) => {
 	  for(i<-0 to sp-1) thread.stack.pop
@@ -72,13 +72,13 @@ class Evaluator {
 	    val accublock = thread.getaccu.asInstanceOf[Zamblock]
 	    thread.setpc(accublock.at(0).asInstanceOf[Zamint].getval)
 	    thread.clearenv
-	    accublock.getval.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+	    accublock.getval.tab.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
 	  }
 	  else {
 	    thread.setpc(thread.stack.getVal.asInstanceOf[Zamint].getval)
 	    thread.stack.pop
 	    thread.clearenv
-	    thread.stack.getVal.asInstanceOf[Zamblock].getval.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+	    thread.stack.getVal.asInstanceOf[Zamblock].getval.tab.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
 	    thread.stack.pop
 	    thread.setextra(thread.stack.getVal.asInstanceOf[Zamint].getval)
 	    thread.stack.pop
@@ -89,16 +89,16 @@ class Evaluator {
 	  for(i<-num_args-1 to 0) thread.stack.push(thread.getenv(i+2))
 	  val nenv = thread.getenv(1)
 	  thread.clearenv
-	  nenv.asInstanceOf[Zamblock].getval.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+	  nenv.asInstanceOf[Zamblock].getval.tab.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
 	  thread.setextra(thread.getextra + num_args)
 	}
 	case Grab(required) => {
 	  if(thread.getextra >= required) thread.setextra(thread.getextra - required)
 	  else {
 	    val num_args = 1 + thread.getextra
-	    val tab = new Array[Value](num_args + 2)
+	    val tab = new MyArray(num_args + 2)
 	    
-	    val Env = new Array[Value](thread.sizeEnv)
+	    val Env = new MyArray(thread.sizeEnv)
 		for(i <-0 to thread.sizeEnv-1) Env.update(i, thread.getenv(i))
 	    tab(1) = new Zamblock(BlockT.normal_t, thread.sizeEnv, Env)
 	    
@@ -110,7 +110,7 @@ class Evaluator {
 	    thread.setpc(thread.stack.getVal.asInstanceOf[Zamint].getval)
 	    thread.stack.pop
 	    thread.clearenv
-	    thread.stack.getVal.asInstanceOf[Zamblock].getval.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+	    thread.stack.getVal.asInstanceOf[Zamblock].getval.tab.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
 	    thread.stack.pop
 	    thread.setextra(thread.stack.getVal.asInstanceOf[Zamint].getval)
 	    thread.stack.pop
@@ -118,7 +118,7 @@ class Evaluator {
 	}
 	case Closure(nvars, pc) => {
 	  if(nvars > 0) thread.stack.push(thread.getaccu)
-	   val tab = new Array[Value](nvars + 1)
+	   val tab = new MyArray(nvars + 1)
 	   tab(0) = new Zamint(thread.getpc + pc)
 	   for(i<-0 to nvars-1) {tab(i+1) = thread.stack.getVal; thread.stack.pop}
 	    
@@ -127,7 +127,7 @@ class Evaluator {
 	}
 	case Closurerec(nfuncs, nvars, npc) => {
 	  if(nvars > 0) thread.stack.push(thread.getaccu)
-	  val tab = new Array[Value](nfuncs * 2 - 1 + nvars)
+	  val tab = new MyArray(nfuncs * 2 - 1 + nvars, nfuncs)
 	  
 	  for(i<-0 to nvars-1) {tab((nfuncs * 2) + i) = thread.stack.getVal; thread.stack.pop}
 	  tab(0) = new Zamint(thread.getpc + npc(0))
@@ -138,18 +138,18 @@ class Evaluator {
 	  
 	  var j = 1
 	  for(i<- 1 to nfuncs-1) {
-	    tab(j) = new Zamblock(BlockT.infix_t, 1, Array[Value](new Zamint((nfuncs - i)*2 + 1)))
+	    tab(j) = new Zamblock(BlockT.infix_t, 0, null)
 	    j = j + 1
 	    tab(j) = new Zamint(thread.getpc + npc(i))
-	    thread.stack.push(tab(j))
+	    thread.stack.push(tab.at(j))
 	    j = j + 1
 	  }
 	  
 	}
-	case Pushoffsetclosure(arg) => thread.stack.push(thread.getaccu);thread.setaccu(thread.getenv(arg + thread.offsetrec))
-	case Offsetclosure(arg) => thread.setaccu(thread.getenv(arg + thread.offsetrec))
-	case Pushoffsetclosurem(arg) => thread.stack.push(thread.getaccu);thread.setaccu(thread.getenv(arg + thread.offsetrec))
-	case Offsetclosurem(arg) => thread.setaccu(thread.getenv(-arg + thread.offsetrec))
+	case Pushoffsetclosure(arg) => thread.stack.push(thread.getaccu);thread.getTabenv.setoffset(arg);thread.setaccu(new Zamblock(BlockT.closure_t, thread.sizeEnv, thread.getTabenv))
+	case Offsetclosure(arg) => thread.getTabenv.setoffset(arg);thread.setaccu(new Zamblock(BlockT.closure_t, thread.sizeEnv, thread.getTabenv))
+	case Pushoffsetclosurem(arg) => thread.stack.push(thread.getaccu);thread.getTabenv.setoffset(-arg);thread.setaccu(new Zamblock(BlockT.closure_t, thread.sizeEnv, thread.getTabenv))
+	case Offsetclosurem(arg) => thread.getTabenv.setoffset(-arg);thread.setaccu(new Zamblock(BlockT.closure_t, thread.sizeEnv, thread.getTabenv))
 	
     case Pushgetglobal(arg) => thread.stack.push(thread.getaccu); thread.setaccu(env.atglob(arg))
 	case Getglobal(arg) => thread.setaccu(env.atglob(arg))
@@ -170,12 +170,12 @@ class Evaluator {
 	  //alloc_small(cible, size, tag)
 	  var block : Zamblock = null
 	  if(size <= MAX_YOUNG_WOSIZE) {
-		  block = new Zamblock(BlockT.apply(typ), size, new Array[Value](size))
+		  block = new Zamblock(BlockT.apply(typ), size, new MyArray(size))
 		  block.set(0, thread.getaccu)
 		  for(i<-1 to size-1) {block.set(i, thread.stack.getVal);thread.stack.pop}
 	  }
 	  else {
-	      block = new Zamblock(BlockT.apply(typ), size, new Array[Value](size))
+	      block = new Zamblock(BlockT.apply(typ), size, new MyArray(size))
 		  block.set(0, thread.getaccu)
 		  for(i<-1 to size-1) {block.set(i, thread.stack.getVal);thread.stack.pop}
 	  }
@@ -185,10 +185,10 @@ class Evaluator {
 	  // size = arg
 	  var block : Zamblock = null
 	  if( size <= MAX_YOUNG_WOSIZE / DOUBLE_WOSIZE) {
-	    block = new Zamblock(BlockT.doublearray_t, size * DOUBLE_WOSIZE, new Array[Value](size))
+	    block = new Zamblock(BlockT.doublearray_t, size * DOUBLE_WOSIZE, new MyArray(size))
 	  }
 	  else {
-	     block = new Zamblock(BlockT.doublearray_t, size * DOUBLE_WOSIZE, new Array[Value](size))
+	     block = new Zamblock(BlockT.doublearray_t, size * DOUBLE_WOSIZE, new MyArray(size))
 	  }
 	  block.set(0, thread.getaccu) //Double_t 
 	  for(i <- 1 to size-1) {block.set(i, thread.stack.getVal);thread.stack.pop} //Double_t
@@ -198,7 +198,7 @@ class Evaluator {
 	case Vectlength() => {var mlsize = thread.getaccu.asInstanceOf[Zamblock].getsize
 	  						if(thread.getaccu.asInstanceOf[Zamblock].gettag == BlockT.doublearray_t) mlsize = mlsize / DOUBLE_WOSIZE
 	  						thread.setaccu(new Zamlong(mlsize))}
-	case Getvectitem() => {thread.setaccu(thread.getaccu.asInstanceOf[Zamblock].getval(
+	case Getvectitem() => {thread.setaccu(thread.getaccu.asInstanceOf[Zamblock].getval.tab(
 							thread.stack.getVal.asInstanceOf[Zamint].getval))
 							thread.stack.pop}
 	case Setvectitem() => {thread.getaccu.asInstanceOf[Zamblock].set(
@@ -206,7 +206,7 @@ class Evaluator {
 							thread.stack.get(1))
 							thread.stack.pop;thread.stack.pop}
 	
-	case Getstringchar() => {thread.setaccu(thread.getaccu.asInstanceOf[Zamblock].getval(
+	case Getstringchar() => {thread.setaccu(thread.getaccu.asInstanceOf[Zamblock].getval.tab(
 										thread.stack.getVal.asInstanceOf[Zamint].getval))
 							thread.stack.pop}
 	case Setstringchar() => {thread.getaccu.asInstanceOf[Zamblock].set(
@@ -236,7 +236,7 @@ class Evaluator {
 	
 	case Pushtrap(trappc) => {
 	  thread.stack.push(new Zamint(thread.getextra))
-	  val Env = new Array[Value](thread.sizeEnv)
+	  val Env = new MyArray(thread.sizeEnv)
 	  for(i <-0 to thread.sizeEnv-1) Env.update(i, thread.getenv(i))
 	  thread.stack.push(new Zamblock(BlockT.normal_t, thread.sizeEnv, Env))
 	  thread.stack.push(new Zamint(thread.getTrapsp))
@@ -251,13 +251,13 @@ class Evaluator {
 	  thread.stack.pop
 	} 
 	case Raise() => {
-	  if(thread.getTrapsp == 0) throw new ErreurZam("Il n'y a pas d'exception cree, fin du programme")
+	  if(thread.getTrapsp == 0) throw new ErreurZam("Il n'y a pas d'exception cree, fin du programme", env)
 	  thread.stack.changeSp(thread.getTrapsp)
 	  thread.setpc(thread.stack.getVal.asInstanceOf[Zamint].getval)
 	  thread.stack.pop
 	  thread.setTrapsp(thread.stack.getVal.asInstanceOf[Zamint].getval)
 	  thread.stack.pop
-	  thread.stack.getVal.asInstanceOf[Zamblock].getval.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
+	  thread.stack.getVal.asInstanceOf[Zamblock].getval.tab.foreach(ent => (thread.setenv(thread.sizeEnv, ent)))
 	  thread.stack.pop
 	  thread.setextra(thread.stack.getVal.asInstanceOf[Zamint].getval)
 	  thread.stack.pop
@@ -271,7 +271,7 @@ class Evaluator {
 	val sp = thread.stack.getSp
 	
 	//lancement primitive
-	env.runtime.run(itprim, narg, thread)
+	env.runtime.run(itprim, narg, env, itT)
 	
 	//restaure
 	thread.setpc(pc+1)
@@ -442,7 +442,7 @@ class Evaluator {
 	case Offsetref(arg) => "offsetref " + arg + "\n"//pointeur ?
 	case Isint() => val res = thread.getaccu.getClass().toString.equals("class ZAM.Zamint"); thread.setaccu(new Zamint(res.asInstanceOf[Int]))
 	    
-    case _=> throw new ErreurZam("Erreur, Instruction inconnue \n")
+    case _=> throw new ErreurZam("Erreur, Instruction inconnue \n", env)
     }
     //mise à jour du pc
     thread.setpc(thread.getpc + 1)

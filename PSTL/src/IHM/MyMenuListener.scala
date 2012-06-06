@@ -26,6 +26,9 @@ def actionPerformed(e : ActionEvent) = name match {
 	}
 	case "Save" => printf("Sauver Fic")
 	case "Quit" => printf("Quitter")
-    case _ => printf("Inconnu")
+	case "E1" => base.Example1
+	case "E2" => base.Example2
+	case "E3" => base.Example3
+    case _ => printf("Choix Inconnu")
    }
 }
